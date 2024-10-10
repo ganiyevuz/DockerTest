@@ -7,7 +7,7 @@ from dotenv.main import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.append(os.path.join(BASE_DIR, 'apps'))
+# sys.path.append(os.path.join(BASE_DIR, 'apps'))
 load_dotenv()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -16,8 +16,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-__ENV_DEBUG = os.getenv('DJANGO_DEBUG')
-DEBUG = int(__ENV_DEBUG) if __ENV_DEBUG.isdigit() else __ENV_DEBUG == 'True'
+DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() in ['true', '1', 't']
 
 DISALLOWED_USER_AGENTS = [
     # re.compile(r'^.*Linux.*'),
@@ -40,12 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # My apps
+    'summarize.apps.SummarizeConfig',
 
     # Third-party libraries
     'rest_framework',
     'drf_yasg',
     'django_filters',
     'corsheaders',
+    'drf_standardized_errors',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -84,16 +86,24 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DATABASE_ENGINE'),
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST', default='postgres'),
-        'PORT': os.getenv('DATABASE_PORT')
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv('DATABASE_ENGINE'),
+#         'NAME': os.getenv('DATABASE_NAME'),
+#         'USER': os.getenv('DATABASE_USER'),
+#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+#         'HOST': os.getenv('DATABASE_HOST', default='postgres'),
+#         'PORT': os.getenv('DATABASE_PORT')
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -127,10 +137,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
@@ -147,17 +157,9 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
-    # 'EXCEPTION_HANDLER': 'shared.exceptions.custom_exception_handler',
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
-    # 'DEFAULT_THROTTLE_CLASSES': [
-    #     'rest_framework.throttling.AnonRateThrottle',
-    #     'rest_framework.throttling.UserRateThrottle'
-    # ],
-    # 'DEFAULT_THROTTLE_RATES': {
-    #     'anon': '10/minute',
-    #     'user': '10/minute'
-    # }
 }
 
 SWAGGER_SETTINGS = {
@@ -183,27 +185,6 @@ SIMPLE_JWT = {
     # "TOKEN_OBTAIN_SERIALIZER": "apps.shared.rest_framework.CustomTokenObtainPairSerializer",
 
 }
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.getenv('CACHE_BACKEND_URL'),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    }
-}
-
-CACHE_OTP_TTL = 300
-CACHE_OTP_KEY_PREFIX = 'otp'
-
-SILENCED_SYSTEM_CHECKS = ['auth.E003']
-
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = os.getenv('TIME_ZONE')
 
 LOGIN_URL = 'admin/'
 LOGIN_REDIRECT_URL = '/'
@@ -224,3 +205,22 @@ if DEBUG:
     }
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+UZA_BASE_URL = os.getenv('UZA_BASE_URL')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+CACHE_TTL = 60 * 15
+CACHE_KEY = 'articles_list'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.getenv('CACHE_BACKEND_URL'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': os.getenv('REDIS_PASSWORD'),
+            'IGNORE_EXCEPTIONS': True,
+        },
+        'KEY_PREFIX': 'users_list'
+    }
+}
