@@ -21,7 +21,7 @@ class SummarizeGenericAPIView(GenericAPIView):
         if summarized_article:
             return Response(SummarizeResponseSerializer(summarized_article).data)
         lang = serializer.validated_data['lang']
-        article = get_article(slug)
+        article = get_article(slug, lang)
         if not article:
             raise NotFound("Article not found.")
         summary = summarize(text=article, lang=lang)
