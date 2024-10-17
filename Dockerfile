@@ -12,7 +12,9 @@ RUN apt-get update && \
     apt-get install -y build-essential libpq-dev netcat-openbsd --fix-missing && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install -r requirements.txt && \
+    pip install gunicorn
+
 
 # Copy application source code and collect static files
 RUN python manage.py collectstatic --noinput
