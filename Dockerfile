@@ -21,12 +21,3 @@ RUN python manage.py collectstatic --noinput
 FROM python:3.11-slim
 WORKDIR /app
 COPY --from=base /app /app
-
-# Create a non-root user
-RUN adduser --disabled-password --no-create-home appuser
-USER appuser
-
-EXPOSE 8000
-
-# Start Gunicorn with optimized settings
-CMD ["gunicorn", "conf.wsgi:application", "--bind", "0.0.0.0:8000", "-w", "4", "--threads", "2"]
