@@ -77,10 +77,24 @@ jobs:
       - name: Create directory on server if not exists
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /test/server/"
-
-      - name: Upload docker-compose.yml and nginx.conf to server
+      - name: Create .env file from secrets
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.deploy.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/test/
+          echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
+          echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
+          echo "DJANGO_DEBUG=${{ secrets.DJANGO_DEBUG }}" >> .env
+          echo "UZA_BASE_URL=${{ secrets.UZA_BASE_URL }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "DATABASE_ENGINE=${{ secrets.DATABASE_ENGINE }}" >> .env
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
+          echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
+          echo "CACHE_BACKEND_URL=${{ secrets.CACHE_BACKEND_URL }}" >> .env
+
+      - name: Upload .env, docker-compose.deploy.yml nginx.conf to server
+        run: |
+          scp -o StrictHostKeyChecking=no .env docker-compose.deploy.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/test/
           scp -o StrictHostKeyChecking=no ./server/nginx.conf ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/test/server/
 
       - name: Deploy using Docker Compose
