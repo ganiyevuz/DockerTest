@@ -41,7 +41,7 @@ services:
       context: .
       dockerfile: Dockerfile
     #    container_name: django_app
-    command: gunicorn conf.wsgi:application --bind 0.0.0.0:8000 -w 4 --threads 2
+    command: /bin/bash -c "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn conf.wsgi:application --bind 0.0.0.0:8000 -w 4 --threads 2"
     volumes:
       - .:/app
       - static_volume:/app/static

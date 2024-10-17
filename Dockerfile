@@ -25,8 +25,11 @@ FROM python:3.11-slim
 WORKDIR /app
 COPY --from=base /app /app
 
-# Install Gunicorn in production stage
-RUN pip install gunicorn -r requirements.txt
+# Install runtime dependencies in the production stage
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run migrations
+#RUN python manage.py makemigrations && python manage.py migrate
 
 # Set environment variable for PATH
 ENV PATH="/usr/local/bin:$PATH"

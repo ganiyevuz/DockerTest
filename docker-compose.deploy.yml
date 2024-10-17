@@ -38,7 +38,7 @@ services:
 
   web:
     image: ganiyevuz/django-app:latest  # Use pre-built image from Docker Hub
-    command: gunicorn conf.wsgi:application --bind 0.0.0.0:8000 -w 4 --threads 2
+    command: /bin/bash -c "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn conf.wsgi:application --bind 0.0.0.0:8000 -w 4 --threads 2"
     volumes:
       - static_volume:/app/static
     ports:
