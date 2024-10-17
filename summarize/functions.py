@@ -13,7 +13,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 def get_article(slug, lang=None):
     try:
-        response = get(f'{UZA_BASE_URL}/{slug}')
+        response = get(f'{UZA_BASE_URL}/{slug}?include=theme,tags,translations&_f=json&_l={lang}')
         if response.status_code == 200:
             return response.json()
     except HTTPError:
