@@ -91,6 +91,9 @@ jobs:
           echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
           echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
           echo "CACHE_BACKEND_URL=${{ secrets.CACHE_BACKEND_URL }}" >> .env
+      - name: Replace IP in Nginx config from GitHub secrets
+        run: |
+          sed -i 's/locahost/${{ secrets.SSH_HOST }}/g' ./server/nginx.conf
 
       - name: Upload .env, docker-compose.deploy.yml nginx.conf to server
         run: |
