@@ -10,7 +10,7 @@ COPY requirements.txt /app/
 
 # Install system dependencies and Python dependencies
 RUN apt-get update && \
-    apt-get install -y build-essential libpq-dev netcat-openbsd --fix-missing && \
+    apt-get install -y build-essential libpq-dev netcat-openbsd postgresql-client nano --fix-missing && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \
     pip install -r requirements.txt
