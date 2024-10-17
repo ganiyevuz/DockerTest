@@ -10,7 +10,7 @@ COPY requirements.txt /app/
 
 # Install system dependencies and Python dependencies
 RUN apt-get update && \
-    apt-get install -y build-essential libpq-dev netcat-openbsd postgresql-client nano --fix-missing && \
+    apt-get install -y build-essential libpq-dev netcat-openbsd nano --fix-missing && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \
     pip install -r requirements.txt
@@ -26,7 +26,11 @@ WORKDIR /app
 COPY --from=base /app /app
 
 # Install runtime dependencies in the production stage
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && \
+    apt-get install -y build-essential libpq-dev netcat-openbsd nano --fix-missing && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 # Run migrations
 #RUN python manage.py makemigrations && python manage.py migrate
