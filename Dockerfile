@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=base /app /app
 
 # Install Gunicorn in production stage
-RUN pip install gunicorn
+RUN pip install gunicorn -r requirements.txt
 
 # Set environment variable for PATH
 ENV PATH="/usr/local/bin:$PATH"
