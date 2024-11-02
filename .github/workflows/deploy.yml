@@ -98,7 +98,6 @@ jobs:
       - name: Check Nginx config for changes
         run: cat ./server/nginx.conf
 
-
       - name: Upload .env, docker-compose.deploy.yml nginx.conf to server
         run: |
           scp -o StrictHostKeyChecking=no .env docker-compose.deploy.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/test/
