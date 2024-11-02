@@ -6,11 +6,9 @@ Docker Compose, and Kubernetes.
 ## Prerequisites
 
 1. **Docker & Docker Compose**: Ensure Docker and Docker Compose are installed on your server.
-2. **Kubernetes**: Familiarity with Kubernetes is helpful if you want to deploy your Django application using
-   Kubernetes.
-3. **GitHub Account**: You will need access to GitHub to configure secrets and actions.
-4. **Server Access**: SSH access to a server where the application will be deployed.
-5. **Environment Variables**: Gather the necessary environment variables for configuring your Django project.
+2. **GitHub Account**: You will need access to GitHub to configure secrets and actions.
+3. **Server Access**: SSH access to a server where the application will be deployed.
+4. **Environment Variables**: Gather the necessary environment variables for configuring your Django project.
 
 ## Step-by-Step Setup
 
